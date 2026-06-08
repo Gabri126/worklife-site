@@ -332,11 +332,11 @@ function Hero() {
         pointerEvents: "none",
       }} />
 
-      <div style={{ position: "relative", textAlign: "center", maxWidth: 800, padding: "0 24px" }}>
+      <div style={{ position: "relative", textAlign: "center", maxWidth: "900px", margin: "0 auto", padding: "0 24px" }}>
         <h1 className="playfair hero-line" style={{
-          fontSize: "clamp(64px, 9vw, 120px)",
+          fontSize: "clamp(2.5rem, 6vw, 4.5rem)",
           fontWeight: 400,
-          lineHeight: 1.02,
+          lineHeight: 1.15,
           letterSpacing: "-0.01em",
           color: "#F1E9D8",
           marginBottom: 0,
@@ -344,10 +344,10 @@ function Hero() {
           Money is abstract.
         </h1>
         <h1 className="playfair hero-line" style={{
-          fontSize: "clamp(64px, 9vw, 120px)",
+          fontSize: "clamp(2.5rem, 6vw, 4.5rem)",
           fontWeight: 400,
           fontStyle: "italic",
-          lineHeight: 1.02,
+          lineHeight: 1.15,
           letterSpacing: "-0.01em",
           color: "#F1E9D8",
           marginBottom: 40,
@@ -358,18 +358,18 @@ function Hero() {
 
         <p className="hero-sub" style={{
           fontFamily: "'DM Mono', monospace",
-          fontSize: "clamp(15px, 1.5vw, 18px)",
+          fontSize: "clamp(0.85rem, 1.2vw, 1rem)",
           color: "#6A7A8C",
-          lineHeight: 1.9,
+          lineHeight: 1.8,
           letterSpacing: "0.04em",
-          maxWidth: 480,
-          margin: "0 auto 48px",
+          maxWidth: 520,
+          margin: "0 auto 44px",
         }}>
           Behind every price, there is human time.<br />
           WorkLife translates money into its real unit: time.
         </p>
 
-        <div className="hero-btns" style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
+        <div className="hero-btns" style={{ display: "flex", gap: "20px", justifyContent: "center", flexWrap: "wrap", marginTop: "0", marginBottom: "0" }}>
           <a href="#install" style={{
             fontFamily: "'DM Mono', monospace",
             fontSize: 11,
