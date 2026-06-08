@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, Suspense, useMemo } from "react";
+import { useRef, useEffect, useState, Suspense, useMemo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
@@ -269,24 +269,35 @@ function Nav() {
       <span className="playfair" style={{ fontSize: 18, fontWeight: 500, color: "#F1E9D8", letterSpacing: "0.02em" }}>
         WorkLife
       </span>
-      <a href="#install" style={{
-        fontFamily: "'DM Mono', monospace",
-        fontSize: 11,
-        letterSpacing: "0.15em",
-        color: "#05070E",
-        background: "#CBB995",
-        padding: "10px 22px",
-        textDecoration: "none",
-        textTransform: "uppercase",
-        transition: "background 0.2s",
-        cursor: "pointer",
-      }}
+      <button
+        style={{
+          fontFamily: "'DM Mono', monospace",
+          fontSize: 11,
+          letterSpacing: "0.15em",
+          color: "#05070E",
+          background: "#CBB995",
+          padding: "10px 22px",
+        border: "none",
+          textTransform: "uppercase",
+          transition: "background 0.2s",
+          cursor: "pointer",
+        }}
         onMouseEnter={e => e.target.style.background = "#E5D8BE"}
-        onMouseLeave={e => e.target.style.background = "#CBB995"}
-      >
-        INSTALL
-      </a>
-    </nav>
+      onMouseLeave={e => e.target.style.background = "#CBB995"}
+        onClick={() => {
+        // 1. Mostra il messaggio a schermo
+        alert("Per usare WorkLife, clicca su 'Aggiungi' nella pagina del Chrome Web Store che si sta per aprire!");
+    
+        // 2. Apre il link del Chrome Web Store in una nuova scheda
+        window.open(
+          "https://chromewebstore.google.com/detail/worklife-price-%E2%80%94-prices-i/enlngmnmlgalaomedhiijdepfkcnljpa?hl=it&utm_source=ext_sidebar", 
+          "_blank"
+        );
+        }}
+        >
+          INSTALL
+        </button>
+      </nav>
   );
 }
 
@@ -601,23 +612,33 @@ function InstallSection() {
           Join thousands who have already changed<br />
           how they think about spending.
         </p>
-        <a href="#" style={{
-          fontFamily: "'DM Mono', monospace",
-          fontSize: 12,
-          letterSpacing: "0.15em",
-          textTransform: "uppercase",
-          color: "#05070E",
-          background: "#CBB995",
-          padding: "18px 48px",
-          textDecoration: "none",
-          display: "inline-block",
-          transition: "background 0.2s",
-        }}
-          onMouseEnter={e => e.target.style.background = "#E5D8BE"}
-          onMouseLeave={e => e.target.style.background = "#CBB995"}
-        >
-          ENTER WORKLIFE
-        </a>
+        <button
+      style={{
+        fontFamily: "'DM Mono', monospace",
+        fontSize: 12,
+        letterSpacing: "0.15em",
+        textTransform: "uppercase",
+        color: "#05070E",
+        background: "#CBB995",
+        padding: "18px 48px",
+        textDecoration: "none",
+        display: "inline-block",
+        border: "none",
+        transition: "background 0.2s",
+        cursor: "pointer",
+      }}
+      onMouseEnter={e => e.target.style.background = "#E5D8BE"}
+      onMouseLeave={e => e.target.style.background = "#CBB995"}
+      onClick={() => {
+        alert("Per usare WorkLife, clicca su 'Aggiungi' nella pagina del Chrome Web Store che si sta per aprire!");
+        window.open(
+          "https://chromewebstore.google.com/detail/worklife-price-%E2%80%94-prices-i/enlngmnmlgalaomedhiijdepfkcnljpa?hl=it&utm_source=ext_sidebar", 
+          "_blank"
+        );
+      }}
+    >
+      ENTER WORKLIFE
+    </button>
       </div>
     </section>
   );
@@ -626,7 +647,7 @@ function InstallSection() {
 /* ─────────────────────────────────────────────
    FOOTER
 ───────────────────────────────────────────── */
-function Footer() {
+function Footer({ setModalContent }) {
   return (
     <footer style={{
       borderTop: "1px solid #182231",
@@ -639,18 +660,26 @@ function Footer() {
     }}>
       <span className="playfair" style={{ fontSize: 16, fontWeight: 400, color: "#F1E9D8" }}>WorkLife</span>
       <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, color: "#3F4D61", letterSpacing: "0.1em" }}>
-        © 2025 · Money is abstract. Time is real.
+        © 2026 · Money is abstract. Time is real.
       </span>
       <div style={{ display: "flex", gap: 32 }}>
         {["Privacy", "Terms", "GitHub"].map((link) => (
-          <a key={link} href="#" style={{
-            fontFamily: "'DM Mono', monospace",
-            fontSize: 11,
-            color: "#6A7A8C",
-            textDecoration: "none",
-            letterSpacing: "0.1em",
-            transition: "color 0.2s",
-          }}
+          <a
+            key={link}
+            href={link === 'GitHub' ? 'https://github.com/Gabri126/worklife-site' : '#'}
+            {...(link === 'GitHub' ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+            style={{
+              fontFamily: "'DM Mono', monospace",
+              fontSize: 11,
+              color: "#6A7A8C",
+              textDecoration: "none",
+              letterSpacing: "0.1em",
+              transition: "color 0.2s",
+            }}
+            onClick={link === 'GitHub' ? undefined : (e) => {
+              e.preventDefault();
+              setModalContent(link.toLowerCase());
+            }}
             onMouseEnter={e => e.target.style.color = "#CBB995"}
             onMouseLeave={e => e.target.style.color = "#6A7A8C"}
           >
@@ -666,6 +695,19 @@ function Footer() {
    PAGE
 ───────────────────────────────────────────── */
 export default function WorkLifePage() {
+  const [modalContent, setModalContent] = useState(null);
+
+  const modalData = {
+    privacy: {
+      title: "Privacy Policy",
+      body: "WorkLife respects your privacy. The extension does not collect, store, or transmit any personal data or browsing history. All salary-to-time conversions happen exclusively locally within your browser environment.",
+    },
+    terms: {
+      title: "Terms of Service",
+      body: "Terms of Service: The WorkLife extension is a free utility tool provided 'as is'. The developer assumes no responsibility or liability for any calculation discrepancies, errors, or misuse of the tool, which is built solely for personal financial awareness.",
+    },
+  };
+
   return (
     <>
       <FontLoader />
@@ -678,7 +720,76 @@ export default function WorkLifePage() {
         <HowSection />
         <InstallSection />
       </main>
-      <Footer />
+
+      {modalContent && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 200,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'rgba(5, 7, 14, 0.82)',
+          backdropFilter: 'blur(18px)',
+          WebkitBackdropFilter: 'blur(18px)',
+          padding: 24,
+        }}>
+          <div style={{
+            position: 'relative',
+            width: '100%',
+            maxWidth: 640,
+            background: '#0B1120',
+            border: '1px solid rgba(203, 185, 149, 0.16)',
+            boxShadow: '0 32px 80px rgba(0, 0, 0, 0.35)',
+            padding: '40px 40px 32px',
+            borderRadius: 24,
+          }}>
+            <button
+              type="button"
+              onClick={() => setModalContent(null)}
+              style={{
+                position: 'absolute',
+                top: 20,
+                right: 20,
+                fontFamily: "'DM Mono', monospace",
+                fontSize: 11,
+                letterSpacing: '0.15em',
+                textTransform: 'uppercase',
+                color: '#05070E',
+                background: '#CBB995',
+                border: 'none',
+                padding: '10px 16px',
+                cursor: 'pointer',
+              }}
+              onMouseEnter={e => e.target.style.background = '#E5D8BE'}
+              onMouseLeave={e => e.target.style.background = '#CBB995'}
+            >
+              Close
+            </button>
+            <h2 style={{
+              fontFamily: 'Playfair Display, Georgia, serif',
+              fontSize: 'clamp(28px, 4vw, 36px)',
+              fontWeight: 400,
+              color: '#F1E9D8',
+              marginBottom: 20,
+            }}>
+              {modalData[modalContent].title}
+            </h2>
+            <p style={{
+              fontFamily: "'DM Mono', monospace",
+              fontSize: 15,
+              color: '#BFC7D2',
+              lineHeight: 1.9,
+              letterSpacing: '0.02em',
+              whiteSpace: 'pre-line',
+            }}>
+              {modalData[modalContent].body}
+            </p>
+          </div>
+        </div>
+      )}
+
+      <Footer setModalContent={setModalContent} />
     </>
   );
 }
