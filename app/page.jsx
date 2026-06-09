@@ -84,7 +84,7 @@ const scrollState = { progress: 0 };
 /* ─────────────────────────────────────────────
    3D MODEL
 ───────────────────────────────────────────── */
-function Model() {
+function Model({ isMobile }) {
   const ref = useRef();
   const { scene } = useGLTF("/models/time-money.glb");
 
@@ -108,15 +108,16 @@ function Model() {
     box.getCenter(center);
     c.position.sub(center);
 
-    // scale to fit
+    // scale to fit, shrink a bit more for mobile screens
     const size = new THREE.Vector3();
     box.getSize(size);
     const maxDim = Math.max(size.x, size.y, size.z);
-    const scale = 2.2 / maxDim;
-    c.scale.setScalar(scale);
+    const baseScale = 2.2 / maxDim;
+    const mobileScale = isMobile ? 0.65 : 1;
+    c.scale.setScalar(baseScale * mobileScale);
 
     return c;
-  }, [scene]);
+  }, [scene, isMobile]);
 
   const currentRot = useRef({ x: -0.04, y: 3.15, z: 3.15 });
   const targetRot = useRef({ x: -0.04, y: 3.15, z: 3.15 });
@@ -230,7 +231,7 @@ function ProgressOverlay({ containerRef }) {
 /* ─────────────────────────────────────────────
    SCENE
 ───────────────────────────────────────────── */
-function Scene() {
+function Scene({ isMobile }) {
   return (
     <>
       <color attach="background" args={["#05070E"]} />
@@ -239,7 +240,7 @@ function Scene() {
       <directionalLight position={[-5, 2, -2]} intensity={0.5} color="#c0d8ff" />
       <pointLight position={[0, -3, -4]} intensity={0.3} color="#8899bb" />
       <Suspense fallback={null}>
-        <Model />
+        <Model isMobile={isMobile} />
       </Suspense>
     </>
   );
@@ -304,7 +305,7 @@ function Nav() {
 /* ─────────────────────────────────────────────
    HERO
 ───────────────────────────────────────────── */
-function Hero() {
+function Hero({ isMobile }) {
   return (
     <section style={{
       position: "relative",
@@ -332,11 +333,11 @@ function Hero() {
         pointerEvents: "none",
       }} />
 
-      <div style={{ position: "relative", textAlign: "center", maxWidth: "900px", margin: "0 auto", padding: "0 24px" }}>
+      <div style={{ position: "relative", textAlign: "center", maxWidth: "900px", margin: "0 auto", padding: "0 24px", paddingTop: isMobile ? "140px" : "80px" }}>
         <h1 className="playfair hero-line" style={{
-          fontSize: "clamp(2.5rem, 6vw, 4.5rem)",
+          fontSize: isMobile ? "2.2rem" : "clamp(2.5rem, 6vw, 4.5rem)",
           fontWeight: 400,
-          lineHeight: 1.15,
+          lineHeight: "1.2",
           letterSpacing: "-0.01em",
           color: "#F1E9D8",
           marginBottom: 0,
@@ -344,10 +345,10 @@ function Hero() {
           Money is abstract.
         </h1>
         <h1 className="playfair hero-line" style={{
-          fontSize: "clamp(2.5rem, 6vw, 4.5rem)",
+          fontSize: isMobile ? "2.2rem" : "clamp(2.5rem, 6vw, 4.5rem)",
           fontWeight: 400,
           fontStyle: "italic",
-          lineHeight: 1.15,
+          lineHeight: "1.2",
           letterSpacing: "-0.01em",
           color: "#F1E9D8",
           marginBottom: 40,
@@ -423,24 +424,27 @@ function Hero() {
 /* ─────────────────────────────────────────────
    PINNED 3D SCENE
 ───────────────────────────────────────────── */
-function PinnedScene() {
+function PinnedScene({ isMobile }) {
   const containerRef = useRef();
 
   return (
     <div ref={containerRef} style={{ position: "relative", height: "330vh" }}>
       <div style={{
         position: "sticky",
-        top: 0,
-        height: "100vh",
+        top: isMobile ? "10vh" : "0px",
+        height: isMobile ? "60vh" : "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
         overflow: "hidden",
       }}>
         <Canvas
           camera={{ position: [0, 0.3, 5], fov: 40 }}
           dpr={[1, 2]}
-          style={{ position: "absolute", inset: 0 }}
+          style={{ width: "100%", height: "100%" }}
           gl={{ antialias: true, alpha: false }}
         >
-          <Scene />
+          <Scene isMobile={isMobile} />
         </Canvas>
         <ProgressOverlay containerRef={containerRef} />
       </div>
@@ -696,6 +700,14 @@ function Footer({ setModalContent }) {
 ───────────────────────────────────────────── */
 export default function WorkLifePage() {
   const [modalContent, setModalContent] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const modalData = {
     privacy: {
@@ -714,8 +726,8 @@ export default function WorkLifePage() {
       <GlobalStyles />
       <Nav />
       <main>
-        <Hero />
-        <PinnedScene />
+        <Hero isMobile={isMobile} />
+        <PinnedScene isMobile={isMobile} />
         <WhySection />
         <HowSection />
         <InstallSection />
